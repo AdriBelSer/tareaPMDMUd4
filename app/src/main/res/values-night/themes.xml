@@ -6,6 +6,7 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="android:windowBackground">@drawable/background_dark</item>
+        <item name="fontFamily">@font/lithos_pro_black</item>
 
     </style>
 
