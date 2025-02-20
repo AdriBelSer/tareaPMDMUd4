@@ -49,4 +49,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation (libs.navigation.fragment)
     implementation (libs.navigation.ui)
+
+    //Lottie dependencies
+    implementation("com.airbnb.android:lottie:6.6.2")
+
 }

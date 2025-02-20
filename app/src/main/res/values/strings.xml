@@ -14,6 +14,9 @@
     <string name="text4_guide_welcome">Pulsa \"Comenzar\" y deja que Spyro te lleve volando a través de esta guía interactiva.</string>
     <string name="tv_textWelcome_start">COMENZAR</string>
     <string name="tv_textWelcome_skip">Saltar guía</string>
+    <string name="tv_guide_characters">Aquí podrás explorar a todos los personajes del mundo de Spyro</string>
+    <string name="tv_guide_worlds">Aquí podrás explorar todos los mundos de Spyro</string>
+    <string name="tv_guide_colectibles">Aquí podrás explorar todos los coleccionables del mundo de Spyro</string>
 
 
 </resources>

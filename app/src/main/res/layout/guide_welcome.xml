@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/guideWelcomeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_transparent"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:visibility="gone">
 
 
     <TextView
@@ -14,13 +16,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:padding="20dp"
         android:text="@string/title_guide_welcome"
         android:textColor="@color/white"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +55,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeFirstParagraph" />
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_welcomeFire"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        app:lottie_fileName="fire_lottie.json"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.558"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeFirstParagraph"/>
+
     <TextView
         android:id="@+id/tv_textWelcomeSecondParagraph"
         android:layout_width="match_parent"
@@ -67,7 +83,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_welcomeSpyroLogo" />
+        app:layout_constraintTop_toBottomOf="@+id/av_welcomeFire" />
 
     <TextView
         android:id="@+id/tv_textWelcomeThirdParagraph"
@@ -100,30 +116,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeThirdParagraph" />
 
-    <ImageView
-        android:id="@+id/iv_welcomeSpyro"
-        android:layout_width="169dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="544dp"
-        android:src="@drawable/spyro"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_welcomeDiamond"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_exit_guide"
+        app:layout_constraintHorizontal_bias="0.161"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeFourthParagraph"
+        app:layout_constraintVertical_bias="1.0"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="diamond_lottie.json"
+        android:layout_marginBottom="24dp"
+        app:lottie_loop="true" />
 
     <android.widget.Button
+        android:id="@+id/btn_start_guide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:background="@android:color/transparent"
         android:src="@drawable/gems"
         android:text="@string/tv_textWelcome_start"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_exit_guide"
-        app:layout_constraintHorizontal_bias="0.265"
+        app:layout_constraintHorizontal_bias="0.331"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_welcomeSpyro"
-        app:layout_constraintVertical_bias="0.534" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeFourthParagraph"
+        app:layout_constraintVertical_bias="0.282" />
 
     <android.widget.Button
         android:id="@+id/btn_exit_guide"
@@ -131,17 +154,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_margin="20dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="4dp"
         android:background="@android:color/transparent"
         android:padding="20dp"
         android:text="@string/tv_textWelcome_skip"
         android:textAllCaps="false"
-        android:textColor="@color/purple"
+        android:textColor="@color/dark_purple"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_welcomeSpyro" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_textWelcomeFourthParagraph"
+        app:layout_constraintVertical_bias="0.177" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
