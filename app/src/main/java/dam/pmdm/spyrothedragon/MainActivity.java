@@ -1,9 +1,5 @@
 package dam.pmdm.spyrothedragon;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +8,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import dam.pmdm.spyrothedragon.databinding.ActivityMainBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideCharactersBinding;
@@ -39,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         guideCharactersBinding = binding.includeLayoutCharacters;
         setContentView(binding.getRoot());
 
+        setDefaultActionBar();
+
         Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
         if (navHostFragment != null) {
             navController = NavHostFragment.findNavController(navHostFragment);
@@ -52,11 +52,7 @@ public class MainActivity extends AppCompatActivity {
             if (destination.getId() == R.id.navigation_characters ||
                     destination.getId() == R.id.navigation_worlds ||
                     destination.getId() == R.id.navigation_collectibles) {
-                // Para las pantallas de los tabs, no queremos que aparezca la flecha de atrás
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            } else {
-                // Si se navega a una pantalla donde se desea mostrar la flecha de atrás, habilítala
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                // TODO quitar la flecha del navigation icon
             }
         });
 
@@ -74,11 +70,16 @@ public class MainActivity extends AppCompatActivity {
     private void onStartGuide(View view) {
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
+        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
 
         if (needToStartGuide) {
-            //binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            //Para ir a una de las pantallas del menu
+            //TODO PONER TIEMPO QUE PERMANECERÁ EN LA PANTALLA
+            selectedBottomMenuById(R.id.navigation_collectibles);
 
-            ObjectAnimator scaleX = ObjectAnimator.ofFloat(
+
+
+/*            ObjectAnimator scaleX = ObjectAnimator.ofFloat(
                     guideCharactersBinding.avFireSelectionCharacter, "scaleX", 1f, 0.5f);
             ObjectAnimator scaleY = ObjectAnimator.ofFloat(
                     guideCharactersBinding.avFireSelectionCharacter, "scaleY", 1f, 0.5f);
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         guideCharactersBinding.textStepCharacters.setVisibility(View.VISIBLE);
                     }
                 }
-            });
+            });*/
         }
     }
 
@@ -110,7 +111,29 @@ public class MainActivity extends AppCompatActivity {
         //TODO GUARDAR EN SHARED PREFERENCES
         //binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
+        guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
         //binding.drawerLayout.close();
+
+    }
+
+    /**
+     * Sets the default action bar using a MaterialToolbar.
+     * Configures the AppBarLayout to disable lift-on-scroll behavior.
+     */
+    private void setDefaultActionBar() {
+        MaterialToolbar toolbar = findViewById(R.id.main_appbar);
+        setSupportActionBar(toolbar);
+        AppBarLayout appBarLayout = findViewById(R.id.main_appbar_layout);
+        appBarLayout.setLiftOnScroll(false);
+    }
+
+    private void selectedBottomMenuById(int menuItemId) {
+        if (menuItemId == R.id.nav_characters)
+            navController.navigate(R.id.navigation_characters);
+        else if (menuItemId == R.id.nav_worlds)
+            navController.navigate(R.id.navigation_worlds);
+        else
+            navController.navigate(R.id.navigation_collectibles);
     }
 
     private boolean selectedBottomMenu(@NonNull MenuItem menuItem) {
