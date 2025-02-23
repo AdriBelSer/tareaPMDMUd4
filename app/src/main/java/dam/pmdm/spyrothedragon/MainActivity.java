@@ -1,5 +1,9 @@
 package dam.pmdm.spyrothedragon;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +22,9 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 import dam.pmdm.spyrothedragon.databinding.ActivityMainBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideCharactersBinding;
+import dam.pmdm.spyrothedragon.databinding.GuideCollectiblesBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideWelcomeBinding;
+import dam.pmdm.spyrothedragon.databinding.GuideWorldsBinding;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private GuideWelcomeBinding guideBinding;
     private GuideCharactersBinding guideCharactersBinding;
+    private GuideWorldsBinding guideWorldsBinding;
+    private GuideCollectiblesBinding guideCollectiblesBinding;
     private Boolean needToStartGuide = true;
 
     @Override
@@ -35,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         guideBinding = binding.includeLayoutWelcome;
         guideCharactersBinding = binding.includeLayoutCharacters;
+        guideWorldsBinding = binding.includeLayoutWorlds;
+        guideCollectiblesBinding = binding.includeLayoutCollectibles;
         setContentView(binding.getRoot());
 
         setDefaultActionBar();
@@ -73,36 +83,10 @@ public class MainActivity extends AppCompatActivity {
         guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
 
         if (needToStartGuide) {
-            //Para ir a una de las pantallas del menu
+
             //TODO PONER TIEMPO QUE PERMANECERÁ EN LA PANTALLA
-            selectedBottomMenuById(R.id.navigation_collectibles);
+            goToCharacters();
 
-
-
-/*            ObjectAnimator scaleX = ObjectAnimator.ofFloat(
-                    guideCharactersBinding.avFireSelectionCharacter, "scaleX", 1f, 0.5f);
-            ObjectAnimator scaleY = ObjectAnimator.ofFloat(
-                    guideCharactersBinding.avFireSelectionCharacter, "scaleY", 1f, 0.5f);
-            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(
-                    guideCharactersBinding.textStepCharacters, "alpha", 0f, 1f);
-
-            scaleX.setRepeatCount(3);
-            scaleY.setRepeatCount(3);
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.play(scaleX).with(scaleY).before(fadeIn);
-            animatorSet.setDuration(1000);
-            animatorSet.start();
-            animatorSet.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (needToStartGuide) {
-                        super.onAnimationEnd(animation);
-                        //binding.drawerLayout.open();
-                        guideCharactersBinding.avFireSelectionCharacter.setVisibility(View.GONE);
-                        guideCharactersBinding.textStepCharacters.setVisibility(View.VISIBLE);
-                    }
-                }
-            });*/
         }
     }
 
@@ -112,9 +96,58 @@ public class MainActivity extends AppCompatActivity {
         //binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
+        guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
+        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
         //binding.drawerLayout.close();
 
     }
+
+    private void goToCharacters() {
+        //Para ir a una de las pantallas del menu
+        selectedBottomMenuById(R.id.nav_characters);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
+                guideCharactersBinding.pulseImageCharacters, "scaleX", 1f, 0.5f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
+                guideCharactersBinding.pulseImageCharacters, "scaleY", 1f, 0.5f);
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(
+                guideCharactersBinding.textStepCharacters, "alpha", 0f, 1f);
+        scaleX.setRepeatCount(3);
+        scaleY.setRepeatCount(3);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleX).with(scaleY).before(fadeIn);
+        animatorSet.setDuration(1000);
+
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (needToStartGuide) {
+                    super.onAnimationEnd(animation);
+                    guideCharactersBinding.pulseImageCharacters.setVisibility(View.GONE);
+                    // goToWorlds();
+                }
+            }
+        });
+
+        animatorSet.start();
+
+    }
+
+    private void goToWorlds() {
+        guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
+        selectedBottomMenuById(R.id.nav_worlds);
+
+
+        //goToCollectibles();
+
+    }
+
+    private void goToCollectibles() {
+        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
+        selectedBottomMenuById(R.id.nav_collectibles);
+
+    }
+
 
     /**
      * Sets the default action bar using a MaterialToolbar.
@@ -127,13 +160,14 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout.setLiftOnScroll(false);
     }
 
+
     private void selectedBottomMenuById(int menuItemId) {
-        if (menuItemId == R.id.nav_characters)
-            navController.navigate(R.id.navigation_characters);
+        if (menuItemId == R.id.nav_collectibles)
+            navController.navigate(R.id.navigation_collectibles);
         else if (menuItemId == R.id.nav_worlds)
             navController.navigate(R.id.navigation_worlds);
         else
-            navController.navigate(R.id.navigation_collectibles);
+            navController.navigate(R.id.navigation_characters);
     }
 
     private boolean selectedBottomMenu(@NonNull MenuItem menuItem) {

@@ -2,41 +2,66 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/guideColectiblesLayout"
+    android:id="@+id/guideCollectiblesLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:clickable="true"
     android:focusable="true"
-    >
+    android:visibility="gone">
 
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/av_FireSelectionColectibles"
+        android:id="@+id/av_FireSelectionCollectibles"
         android:layout_width="424dp"
         android:layout_height="283dp"
-        android:layout_marginTop="480dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginTop="520dp"
+        android:layout_marginEnd="-150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_fileName="fire_selection_lottie.json"
         app:lottie_loop="true" />
 
+
     <TextView
-        android:id="@+id/textStepColectibles"
+        android:id="@+id/textStepCollectibles"
         android:layout_width="248dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/speech_bubble_left"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/speech_bubble_right"
         android:gravity="center"
         android:text="@string/tv_guide_colectibles"
         android:textColor="@color/white"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.957"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/pulseImageCollectibles"
+        android:layout_width="360px"
+        android:layout_height="74dp"
+        android:src="@drawable/circle_focus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="2dp"
+ />
+
+    <android.widget.Button
+        android:id="@+id/btn_finish_guide_collectibles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:background="@color/dark_purple"
+        android:padding="20dp"
+        android:layout_marginBottom="70dp"
+        android:text="@string/btn_end_guide"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 

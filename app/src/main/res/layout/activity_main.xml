@@ -63,4 +63,12 @@
         android:id="@+id/includeLayoutCharacters"
         layout="@layout/guide_characters" />
 
+    <include
+        android:id="@+id/includeLayoutWorlds"
+        layout="@layout/guide_worlds" />
+
+    <include
+        android:id="@+id/includeLayoutCollectibles"
+        layout="@layout/guide_collectibles" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
