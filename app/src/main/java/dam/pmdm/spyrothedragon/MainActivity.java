@@ -1,10 +1,10 @@
 package dam.pmdm.spyrothedragon;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +23,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import dam.pmdm.spyrothedragon.databinding.ActivityMainBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideCharactersBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideCollectiblesBinding;
+import dam.pmdm.spyrothedragon.databinding.GuideFinalBinding;
+import dam.pmdm.spyrothedragon.databinding.GuideInfoIconBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideWelcomeBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideWorldsBinding;
 
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private GuideCharactersBinding guideCharactersBinding;
     private GuideWorldsBinding guideWorldsBinding;
     private GuideCollectiblesBinding guideCollectiblesBinding;
+    private GuideInfoIconBinding guideInfoIconBinding;
+    private GuideFinalBinding guideFinalBinding;
     private Boolean needToStartGuide = true;
 
     @Override
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         guideCharactersBinding = binding.includeLayoutCharacters;
         guideWorldsBinding = binding.includeLayoutWorlds;
         guideCollectiblesBinding = binding.includeLayoutCollectibles;
+        guideInfoIconBinding = binding.includeLayoutInfoIcon;
+        guideFinalBinding = binding.includeLayoutFinal;
         setContentView(binding.getRoot());
 
         setDefaultActionBar();
@@ -80,11 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private void onStartGuide(View view) {
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
-        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
 
         if (needToStartGuide) {
-
-            //TODO PONER TIEMPO QUE PERMANECERÁ EN LA PANTALLA
             goToCharacters();
 
         }
@@ -103,50 +106,162 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToCharacters() {
+        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
+        guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(this::goToWorlds);
+        guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
         //Para ir a una de las pantallas del menu
         selectedBottomMenuById(R.id.nav_characters);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(
                 guideCharactersBinding.pulseImageCharacters, "scaleX", 1f, 0.5f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(
                 guideCharactersBinding.pulseImageCharacters, "scaleY", 1f, 0.5f);
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(
-                guideCharactersBinding.textStepCharacters, "alpha", 0f, 1f);
         scaleX.setRepeatCount(3);
         scaleY.setRepeatCount(3);
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(scaleX).with(scaleY).before(fadeIn);
+        animatorSet.play(scaleX).with(scaleY);
         animatorSet.setDuration(1000);
-
-        animatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (needToStartGuide) {
-                    super.onAnimationEnd(animation);
-                    guideCharactersBinding.pulseImageCharacters.setVisibility(View.GONE);
-                    // goToWorlds();
-                }
-            }
-        });
 
         animatorSet.start();
 
     }
 
-    private void goToWorlds() {
+    private void goToWorlds(View view) {
+        guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
+        guideWorldsBinding.btnExitGuideWorlds.setOnClickListener(this::onExitGuide);
+        guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(this::goToCollectibles);
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_worlds);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
+                guideWorldsBinding.pulseImageWorlds, "scaleX", 1f, 0.5f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
+                guideWorldsBinding.pulseImageWorlds, "scaleY", 1f, 0.5f);
+        scaleX.setRepeatCount(3);
+        scaleY.setRepeatCount(3);
 
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setDuration(1000);
 
-        //goToCollectibles();
-
+        animatorSet.start();
     }
 
-    private void goToCollectibles() {
+
+    private void goToCollectibles(View view) {
+        guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
+        guideCollectiblesBinding.btnExitGuideCollectibles.setOnClickListener(this::onExitGuide);
+        guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(this::goToInfoIcon);
         guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_collectibles);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
+                guideCollectiblesBinding.pulseImageCollectibles, "scaleX", 1f, 0.5f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
+                guideCollectiblesBinding.pulseImageCollectibles, "scaleY", 1f, 0.5f);
+        scaleX.setRepeatCount(3);
+        scaleY.setRepeatCount(3);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setDuration(1000);
+
+        animatorSet.start();
 
     }
+
+    private void goToInfoIcon(View view) {
+        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
+        guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(this::onExitGuide);
+        guideInfoIconBinding.btnNextGuideInfoIcon.setOnClickListener(this::goToFinal);
+        guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.VISIBLE);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
+                guideInfoIconBinding.pulseImageInfoIcon, "scaleX", 1f, 0.5f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
+                guideInfoIconBinding.pulseImageInfoIcon, "scaleY", 1f, 0.5f);
+        scaleX.setRepeatCount(3);
+        scaleY.setRepeatCount(3);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setDuration(1000);
+        animatorSet.start();
+
+        new Handler(Looper.getMainLooper()).postDelayed(this::showInfoDialog, 2000);
+
+    }
+
+    private void goToFinal(View view) {
+        guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
+        guideFinalBinding.btnExitGuideFinal.setOnClickListener(this::onExitGuide);
+        guideFinalBinding.guideFinalLayout.setVisibility(View.VISIBLE);
+
+        animateSection(
+                guideFinalBinding.avArrowSelectionCharacterFinal,
+                guideFinalBinding.pulseImageCharactersFinal,
+                guideFinalBinding.textStepCharactersFinal,
+                0 // Delay inicial
+        );
+
+        animateSection(
+                guideFinalBinding.avArrowSelectionWorldsFinal,
+                guideFinalBinding.pulseImageWorldsFinal,
+                guideFinalBinding.textStepWorldsFinal,
+                3000 // 3 segundo después
+        );
+
+        animateSection(
+                guideFinalBinding.avArrowSelectionCollectiblesFinal,
+                guideFinalBinding.pulseImageCollectiblesFinal,
+                guideFinalBinding.textStepCollectiblesFinal,
+                6000 // 6 segundos después
+        );
+
+        animateSection(
+                guideFinalBinding.avArrowSelectionInfoIconFinal,
+                guideFinalBinding.pulseImageInfoIconFinal,
+                guideFinalBinding.textStepInfoIconFinal,
+                9000 // 9 segundos después
+        );
+    }
+
+    private void animateSection(View arrow, View pulse, View text, long startDelay) {
+        arrow.setAlpha(0f);
+        pulse.setAlpha(0f);
+        text.setAlpha(0f);
+
+        arrow.setScaleX(0.5f);
+        arrow.setScaleY(0.5f);
+        pulse.setScaleX(0.5f);
+        pulse.setScaleY(0.5f);
+        text.setScaleX(0.5f);
+        text.setScaleY(0.5f);
+
+        ObjectAnimator fadeInArrow = ObjectAnimator.ofFloat(arrow, "alpha", 0f, 1f);
+        ObjectAnimator fadeInPulse = ObjectAnimator.ofFloat(pulse, "alpha", 0f, 1f);
+        ObjectAnimator fadeInText = ObjectAnimator.ofFloat(text, "alpha", 0f, 1f);
+
+        ObjectAnimator scaleUpArrowX = ObjectAnimator.ofFloat(arrow, "scaleX", 0.5f, 1f);
+        ObjectAnimator scaleUpArrowY = ObjectAnimator.ofFloat(arrow, "scaleY", 0.5f, 1f);
+        ObjectAnimator scaleUpPulseX = ObjectAnimator.ofFloat(pulse, "scaleX", 0.5f, 1f);
+        ObjectAnimator scaleUpPulseY = ObjectAnimator.ofFloat(pulse, "scaleY", 0.5f, 1f);
+        ObjectAnimator scaleUpTextX = ObjectAnimator.ofFloat(text, "scaleX", 0.5f, 1f);
+        ObjectAnimator scaleUpTextY = ObjectAnimator.ofFloat(text, "scaleY", 0.5f, 1f);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(
+                fadeInArrow, fadeInPulse, fadeInText,
+                scaleUpArrowX, scaleUpArrowY,
+                scaleUpPulseX, scaleUpPulseY,
+                scaleUpTextX, scaleUpTextY
+        );
+        animatorSet.setDuration(1000);
+        animatorSet.setStartDelay(startDelay);
+        animatorSet.start();
+    }
+
+        //Que vayan apareciendo poco a poco los bocadillos
+        ///////Lo puedo hacer con el handler
+        //Que aparezca lo último el botón de finalizar
+
 
 
     /**

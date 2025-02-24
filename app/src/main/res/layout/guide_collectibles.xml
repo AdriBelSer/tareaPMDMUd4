@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/guideCollectiblesLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -43,26 +42,42 @@
         android:id="@+id/pulseImageCollectibles"
         android:layout_width="360px"
         android:layout_height="74dp"
-        android:src="@drawable/circle_focus"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginRight="2dp"
- />
+        android:src="@drawable/circle_focus_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <android.widget.Button
-        android:id="@+id/btn_finish_guide_collectibles"
+        android:id="@+id/btn_next_guide_collectibles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="70dp"
         android:background="@color/dark_purple"
         android:padding="20dp"
-        android:layout_marginBottom="70dp"
-        android:text="@string/btn_end_guide"
+        android:text="@string/btn_text_next"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/btn_exit_guide_collectibles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        android:padding="20dp"
+        android:text="@string/btn_text_skip"
+        android:textAllCaps="false"
+        android:textColor="@color/dark_purple"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

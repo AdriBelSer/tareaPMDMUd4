@@ -1,7 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/guideFinalLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/guideFinalLayout">
+    android:background="@android:color/transparent"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <!--   Resume characters   -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_arrow_SelectionCharacterFinal"
+        android:layout_width="119dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginBottom="55dp"
+        app:layout_constraintBottom_toBottomOf="@+id/pulseImageCharactersFinal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="down_arrow_lottie.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/textStepCharactersFinal"
+        android:layout_width="248dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/speech_bubble_left"
+        android:gravity="center"
+        android:text="@string/tv_guide_characters"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/pulseImageCharactersFinal"
+        android:layout_width="360px"
+        android:layout_height="74dp"
+        android:layout_marginLeft="2dp"
+        android:src="@drawable/circle_focus_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+<!--   Resume worlds   -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_arrow_SelectionWorldsFinal"
+        android:layout_width="119dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="145dp"
+        android:layout_marginBottom="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="down_arrow_lottie.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/textStepWorldsFinal"
+        android:layout_width="248dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginRight="-180dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/speech_bubble_left"
+        android:gravity="center"
+        android:text="@string/tv_guide_worlds"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/pulseImageWorldsFinal"
+        android:layout_width="360px"
+        android:layout_height="74dp"
+        android:src="@drawable/circle_focus_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--   Resume collectibles   -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_arrow_SelectionCollectiblesFinal"
+        android:layout_width="119dp"
+        android:layout_height="106dp"
+        android:layout_marginBottom="55dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="down_arrow_lottie.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/textStepCollectiblesFinal"
+        android:layout_width="248dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/speech_bubble_right"
+        android:gravity="center"
+        android:text="@string/tv_guide_colectibles"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/pulseImageCollectiblesFinal"
+        android:layout_width="360px"
+        android:layout_height="74dp"
+        android:layout_marginRight="2dp"
+        android:src="@drawable/circle_focus_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!--   Resume info icon   -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/av_arrow_SelectionInfoIconFinal"
+        android:layout_width="119dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="55dp"
+        android:layout_marginRight="-30dp"
+        android:scaleY="-1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="down_arrow_lottie.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/textStepInfoIconFinal"
+        android:layout_width="248dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/speech_bubble_upside_right"
+        android:gravity="center"
+        android:text="@string/tv_guide_info_icon"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/pulseImageInfoIconFinal"
+        android:layout_width="97dp"
+        android:layout_height="53dp"
+        android:layout_marginRight="-20dp"
+        android:src="@drawable/circle_focus_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--   Finale button   -->
+    <android.widget.Button
+        android:id="@+id/btn_exit_guide_Final"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:background="@color/dark_purple"
+        android:padding="20dp"
+        android:text="@string/btn_end_guide"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

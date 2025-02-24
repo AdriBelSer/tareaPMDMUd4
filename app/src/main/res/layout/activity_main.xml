@@ -71,4 +71,12 @@
         android:id="@+id/includeLayoutCollectibles"
         layout="@layout/guide_collectibles" />
 
+    <include
+        android:id="@+id/includeLayoutInfoIcon"
+        layout="@layout/guide_info_icon" />
+
+    <include
+        android:id="@+id/includeLayoutFinal"
+        layout="@layout/guide_final" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -19,6 +19,7 @@
     <string name="tv_guide_colectibles">Aquí podrás explorar todos los coleccionables del mundo de Spyro</string>
     <string name="btn_text_next">Siguiente</string>
     <string name="btn_end_guide">Finalizar guía</string>
+    <string name="tv_guide_info_icon">Aquí podrás encontrar la información de la app</string>
 
 
 </resources>
