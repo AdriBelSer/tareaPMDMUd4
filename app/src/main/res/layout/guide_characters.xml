@@ -31,7 +31,7 @@
         android:gravity="center"
         android:text="@string/tv_guide_characters"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -50,16 +50,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="20dp"
         android:background="@android:color/transparent"
         android:padding="20dp"
         android:text="@string/btn_text_skip"
         android:textAllCaps="false"
         android:textColor="@color/dark_purple"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="@dimen/small_textSize"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <android.widget.Button
         android:id="@+id/btn_next_guide_characters"
@@ -67,13 +67,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="60dp"
         android:background="@color/dark_purple"
-        android:padding="20dp"
         android:text="@string/btn_text_next"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

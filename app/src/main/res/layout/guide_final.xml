@@ -32,7 +32,7 @@
         android:gravity="center"
         android:text="@string/tv_guide_characters"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -70,7 +70,7 @@
         android:gravity="center"
         android:text="@string/tv_guide_worlds"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -107,7 +107,7 @@
         android:gravity="center"
         android:text="@string/tv_guide_colectibles"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -128,11 +128,10 @@
         android:layout_height="106dp"
         android:layout_marginTop="55dp"
         android:layout_marginRight="-30dp"
-        android:scaleY="-1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="down_arrow_lottie.json"
+        app:lottie_fileName="up_arrow_lottie.json"
         app:lottie_loop="true" />
 
     <TextView
@@ -145,7 +144,7 @@
         android:gravity="center"
         android:text="@string/tv_guide_info_icon"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -170,7 +169,7 @@
         android:text="@string/btn_end_guide"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="@dimen/small_textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

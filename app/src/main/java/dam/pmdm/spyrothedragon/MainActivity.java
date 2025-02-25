@@ -96,12 +96,14 @@ public class MainActivity extends AppCompatActivity {
     private void onExitGuide(View view) {
         needToStartGuide = false;
         //TODO GUARDAR EN SHARED PREFERENCES
-        //binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
         guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
-        //binding.drawerLayout.close();
+        guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
+        guideFinalBinding.guideFinalLayout.setVisibility(View.GONE);
+
+        selectedBottomMenuById(R.id.nav_characters);
 
     }
 
@@ -191,47 +193,56 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToFinal(View view) {
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
+        guideFinalBinding.btnExitGuideFinal.setVisibility(View.INVISIBLE);
         guideFinalBinding.btnExitGuideFinal.setOnClickListener(this::onExitGuide);
         guideFinalBinding.guideFinalLayout.setVisibility(View.VISIBLE);
+
+        long delay = 0; // Empezamos sin retraso
 
         animateSection(
                 guideFinalBinding.avArrowSelectionCharacterFinal,
                 guideFinalBinding.pulseImageCharactersFinal,
                 guideFinalBinding.textStepCharactersFinal,
-                0 // Delay inicial
+                delay=0
         );
 
         animateSection(
                 guideFinalBinding.avArrowSelectionWorldsFinal,
                 guideFinalBinding.pulseImageWorldsFinal,
                 guideFinalBinding.textStepWorldsFinal,
-                3000 // 3 segundo después
+                delay=4000
         );
 
         animateSection(
                 guideFinalBinding.avArrowSelectionCollectiblesFinal,
                 guideFinalBinding.pulseImageCollectiblesFinal,
                 guideFinalBinding.textStepCollectiblesFinal,
-                6000 // 6 segundos después
+                delay = 8000
         );
 
         animateSection(
                 guideFinalBinding.avArrowSelectionInfoIconFinal,
                 guideFinalBinding.pulseImageInfoIconFinal,
                 guideFinalBinding.textStepInfoIconFinal,
-                9000 // 9 segundos después
+                delay = 12000
         );
+
+        // Mostrar botón de salida al final
+        showExitButton(delay = 16000);
     }
 
     private void animateSection(View arrow, View pulse, View text, long startDelay) {
-        arrow.setAlpha(0f);
-        pulse.setAlpha(0f);
-        text.setAlpha(0f);
+        long duration = 2000; // Duración de aparición
 
+        arrow.setAlpha(0f);
         arrow.setScaleX(0.5f);
         arrow.setScaleY(0.5f);
+
+        pulse.setAlpha(0f);
         pulse.setScaleX(0.5f);
         pulse.setScaleY(0.5f);
+
+        text.setAlpha(0f);
         text.setScaleX(0.5f);
         text.setScaleY(0.5f);
 
@@ -246,22 +257,41 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator scaleUpTextX = ObjectAnimator.ofFloat(text, "scaleX", 0.5f, 1f);
         ObjectAnimator scaleUpTextY = ObjectAnimator.ofFloat(text, "scaleY", 0.5f, 1f);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(
+        AnimatorSet appearSet = new AnimatorSet();
+        appearSet.playTogether(
                 fadeInArrow, fadeInPulse, fadeInText,
                 scaleUpArrowX, scaleUpArrowY,
                 scaleUpPulseX, scaleUpPulseY,
                 scaleUpTextX, scaleUpTextY
         );
-        animatorSet.setDuration(1000);
-        animatorSet.setStartDelay(startDelay);
-        animatorSet.start();
+        appearSet.setDuration(duration);
+        appearSet.setStartDelay(startDelay);
+
+        // Animaciones de desaparición
+        ObjectAnimator fadeOutArrow = ObjectAnimator.ofFloat(arrow, "alpha", 1f, 0f);
+        ObjectAnimator fadeOutPulse = ObjectAnimator.ofFloat(pulse, "alpha", 1f, 0f);
+        ObjectAnimator fadeOutText = ObjectAnimator.ofFloat(text, "alpha", 1f, 0f);
+
+        AnimatorSet disappearSet = new AnimatorSet();
+        disappearSet.playTogether(fadeOutArrow, fadeOutPulse, fadeOutText);
+        disappearSet.setDuration(duration);
+        disappearSet.setStartDelay(duration);
+
+        AnimatorSet fullSet = new AnimatorSet();
+        fullSet.playSequentially(appearSet, disappearSet);
+        fullSet.start();
     }
 
-        //Que vayan apareciendo poco a poco los bocadillos
-        ///////Lo puedo hacer con el handler
-        //Que aparezca lo último el botón de finalizar
+    // Método para mostrar el botón de salida al final
+    private void showExitButton(long startDelay) {
+        guideFinalBinding.btnExitGuideFinal.setAlpha(0f);
+        guideFinalBinding.btnExitGuideFinal.setVisibility(View.VISIBLE);
 
+        ObjectAnimator fadeInButton = ObjectAnimator.ofFloat(guideFinalBinding.btnExitGuideFinal, "alpha", 0f, 1f);
+        fadeInButton.setDuration(1000);
+        fadeInButton.setStartDelay(startDelay);
+        fadeInButton.start();
+    }
 
 
     /**
