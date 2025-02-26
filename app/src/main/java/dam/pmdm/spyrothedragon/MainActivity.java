@@ -8,12 +8,14 @@ import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -38,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private GuideCollectiblesBinding guideCollectiblesBinding;
     private GuideInfoIconBinding guideInfoIconBinding;
     private GuideFinalBinding guideFinalBinding;
-    private Boolean needToStartGuide = true;
+    // private Boolean needToStartGuide = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +71,18 @@ public class MainActivity extends AppCompatActivity {
             if (destination.getId() == R.id.navigation_characters ||
                     destination.getId() == R.id.navigation_worlds ||
                     destination.getId() == R.id.navigation_collectibles) {
-                // TODO quitar la flecha del navigation icon
+                //Quitar el botón back en los fragments
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             }
         });
 
-        initializeGuide();
+        MyApp app = (MyApp) getApplication();
+        boolean showGuide = app.getSavedNeedGuide();
+        if (showGuide) {
+            initializeGuide();
+        } else {
+            Toast.makeText(this, "Ya has visto la guia", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -87,15 +97,15 @@ public class MainActivity extends AppCompatActivity {
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
 
-        if (needToStartGuide) {
-            goToCharacters();
+        goToCharacters();
 
-        }
+
     }
 
     private void onExitGuide(View view) {
-        needToStartGuide = false;
-        //TODO GUARDAR EN SHARED PREFERENCES
+        MyApp app = (MyApp) getApplication();
+        app.saveNeedGuide(false);
+
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
@@ -104,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         guideFinalBinding.guideFinalLayout.setVisibility(View.GONE);
 
         selectedBottomMenuById(R.id.nav_characters);
+
 
     }
 
@@ -203,14 +214,14 @@ public class MainActivity extends AppCompatActivity {
                 guideFinalBinding.avArrowSelectionCharacterFinal,
                 guideFinalBinding.pulseImageCharactersFinal,
                 guideFinalBinding.textStepCharactersFinal,
-                delay=0
+                delay = 0
         );
 
         animateSection(
                 guideFinalBinding.avArrowSelectionWorldsFinal,
                 guideFinalBinding.pulseImageWorldsFinal,
                 guideFinalBinding.textStepWorldsFinal,
-                delay=4000
+                delay = 4000
         );
 
         animateSection(
@@ -307,21 +318,42 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void selectedBottomMenuById(int menuItemId) {
+        NavOptions navOptions = new NavOptions.Builder()
+                .setEnterAnim(R.anim.nav_slide_left)
+                .setExitAnim(R.anim.nav_slide_right)
+                .setPopEnterAnim(R.anim.nav_slide_left)
+                .setPopExitAnim(R.anim.nav_slide_right)
+                .build();
+
         if (menuItemId == R.id.nav_collectibles)
-            navController.navigate(R.id.navigation_collectibles);
+            navController.navigate(R.id.navigation_collectibles, null, navOptions);
         else if (menuItemId == R.id.nav_worlds)
-            navController.navigate(R.id.navigation_worlds);
+            navController.navigate(R.id.navigation_worlds, null, navOptions);
         else
-            navController.navigate(R.id.navigation_characters);
+            navController.navigate(R.id.navigation_characters, null, navOptions);
+
     }
 
     private boolean selectedBottomMenu(@NonNull MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.nav_characters)
-            navController.navigate(R.id.navigation_characters);
-        else if (menuItem.getItemId() == R.id.nav_worlds)
-            navController.navigate(R.id.navigation_worlds);
+        int destinationId = menuItem.getItemId();
+        NavOptions navOptions = new NavOptions.Builder()
+                .setEnterAnim(R.anim.nav_slide_left)
+                .setExitAnim(R.anim.nav_slide_right)
+                .setPopEnterAnim(R.anim.nav_slide_left)
+                .setPopExitAnim(R.anim.nav_slide_right)
+                .build();
+
+        if (navController.getCurrentDestination() != null &&
+                navController.getCurrentDestination().getId() == destinationId) {
+            return true;  // Evita recargar el mismo fragmento
+        }
+
+        if (destinationId == R.id.nav_characters)
+            navController.navigate(R.id.navigation_characters, null, navOptions);
+        else if (destinationId == R.id.nav_worlds)
+            navController.navigate(R.id.navigation_worlds, null, navOptions);
         else
-            navController.navigate(R.id.navigation_collectibles);
+            navController.navigate(R.id.navigation_collectibles, null, navOptions);
         return true;
 
     }

@@ -15,7 +15,8 @@
         android:id="@+id/navigation_characters"
         android:name="dam.pmdm.spyrothedragon.ui.CharactersFragment"
         android:label="@string/characters"
-        tools:layout="@layout/fragment_characters" />
+        tools:layout="@layout/fragment_characters" >
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_collectibles"
