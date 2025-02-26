@@ -52,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:background="@color/white_translucent"
-        android:padding="20dp"
         android:text="@string/btn_text_skip"
         android:textAllCaps="false"
         android:textColor="@color/dark_purple"

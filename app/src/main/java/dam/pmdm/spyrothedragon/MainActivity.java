@@ -2,6 +2,7 @@ package dam.pmdm.spyrothedragon;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private GuideCollectiblesBinding guideCollectiblesBinding;
     private GuideInfoIconBinding guideInfoIconBinding;
     private GuideFinalBinding guideFinalBinding;
-    // private Boolean needToStartGuide = true;
 
 
     @Override
@@ -84,11 +84,18 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Ya has visto la guia", Toast.LENGTH_SHORT).show();
         }
 
+
     }
 
     private void initializeGuide() {
-        guideBinding.btnExitGuide.setOnClickListener(this::onExitGuide);
-        guideBinding.btnStartGuide.setOnClickListener(this::onStartGuide);
+        guideBinding.btnStartGuide.setOnClickListener(view -> {
+            soundOnClickButtonStart(view); // Reproduce el sonido
+            onStartGuide(view); // Inicia la guía
+        });
+        guideBinding.btnExitGuide.setOnClickListener(view -> {
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
         guideBinding.guideWelcomeLayout.setVisibility(View.VISIBLE);
 
     }
@@ -96,10 +103,49 @@ public class MainActivity extends AppCompatActivity {
     private void onStartGuide(View view) {
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
-
         goToCharacters();
 
+    }
+    private void soundOnClickButtonStart(View view) {
+        // Reproducir sonido al pulsar el botón de inicio
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.dragon_get);
+        mediaPlayer.start();
 
+        // Establecer el listener para liberar recursos después de la reproducción
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();  // Liberar el MediaPlayer
+            }
+        });
+    }
+
+    private void soundOnClickButtonNext(View view) {
+        // Reproducir sonido al pulsar el botón de inicio
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.gem_chest);
+        mediaPlayer.start();
+
+        // Establecer el listener para liberar recursos después de la reproducción
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();  // Liberar el MediaPlayer
+            }
+        });
+    }
+
+    private void soundOnClickButtonFinish(View view) {
+        // Reproducir sonido al pulsar el botón de inicio
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.flameout);
+        mediaPlayer.start();
+
+        // Establecer el listener para liberar recursos después de la reproducción
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();  // Liberar el MediaPlayer
+            }
+        });
     }
 
     private void onExitGuide(View view) {
@@ -120,7 +166,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToCharacters() {
         guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
-        guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(this::goToWorlds);
+        guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(view -> {
+            soundOnClickButtonNext(view); // Reproduce el sonido
+            goToWorlds(view);
+        });
+        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(view -> {
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
         //Para ir a una de las pantallas del menu
         selectedBottomMenuById(R.id.nav_characters);
@@ -137,12 +190,21 @@ public class MainActivity extends AppCompatActivity {
 
         animatorSet.start();
 
+
     }
 
     private void goToWorlds(View view) {
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
-        guideWorldsBinding.btnExitGuideWorlds.setOnClickListener(this::onExitGuide);
-        guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(this::goToCollectibles);
+        guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(v -> {
+            soundOnClickButtonNext(view); // Reproduce el sonido
+            goToCollectibles(view);
+        });
+        guideWorldsBinding.btnExitGuideWorlds.setOnClickListener(v -> {
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
+
+
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_worlds);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(
@@ -157,13 +219,21 @@ public class MainActivity extends AppCompatActivity {
         animatorSet.setDuration(1000);
 
         animatorSet.start();
+
     }
 
 
     private void goToCollectibles(View view) {
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
-        guideCollectiblesBinding.btnExitGuideCollectibles.setOnClickListener(this::onExitGuide);
-        guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(this::goToInfoIcon);
+        guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(v -> {
+            soundOnClickButtonNext(view); // Reproduce el sonido
+            goToInfoIcon(view);
+        });
+        guideCollectiblesBinding.btnExitGuideCollectibles.setOnClickListener(v -> {
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
+
         guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_collectibles);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(
@@ -183,8 +253,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToInfoIcon(View view) {
         guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
-        guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(this::onExitGuide);
-        guideInfoIconBinding.btnNextGuideInfoIcon.setOnClickListener(this::goToFinal);
+        guideInfoIconBinding.btnNextGuideInfoIcon.setOnClickListener(v -> {
+            soundOnClickButtonNext(view); // Reproduce el sonido
+            goToFinal(view);
+        });
+        guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(v -> {
+                    soundOnClickButtonFinish(view);
+                    onExitGuide(view);
+                });
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.VISIBLE);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(
                 guideInfoIconBinding.pulseImageInfoIcon, "scaleX", 1f, 0.5f);
@@ -205,7 +281,10 @@ public class MainActivity extends AppCompatActivity {
     private void goToFinal(View view) {
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
         guideFinalBinding.btnExitGuideFinal.setVisibility(View.INVISIBLE);
-        guideFinalBinding.btnExitGuideFinal.setOnClickListener(this::onExitGuide);
+        guideFinalBinding.btnExitGuideFinal.setOnClickListener(v -> {
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
         guideFinalBinding.guideFinalLayout.setVisibility(View.VISIBLE);
 
         long delay = 0; // Empezamos sin retraso
