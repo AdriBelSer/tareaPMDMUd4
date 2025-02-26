@@ -78,12 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
         MyApp app = (MyApp) getApplication();
         boolean showGuide = app.getSavedNeedGuide();
-        if (showGuide) {
+        if (showGuide)
             initializeGuide();
-        } else {
-            Toast.makeText(this, "Ya has visto la guia", Toast.LENGTH_SHORT).show();
-        }
-
 
     }
 

@@ -20,6 +20,8 @@
     <string name="btn_text_next">Siguiente</string>
     <string name="btn_end_guide">Finalizar guía</string>
     <string name="tv_guide_info_icon">Aquí podrás encontrar la información de la app</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
