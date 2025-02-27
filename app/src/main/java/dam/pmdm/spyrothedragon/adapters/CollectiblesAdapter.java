@@ -70,11 +70,6 @@ public class CollectiblesAdapter extends RecyclerView.Adapter<CollectiblesAdapte
 
     private void activateEasterEgg() {
         // Cargar el Fragment con el video
-/*        FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-        VideoFragment videoFragment = new VideoFragment();
-        transaction.replace(R.id.fragment_container, videoFragment); // Asegúrate de tener un contenedor de Fragmentos en tu layout
-        transaction.addToBackStack(null); // Permite volver atrás
-        transaction.commit();*/
         VideoFragment dialog = VideoFragment.newInstance(R.raw.spyro_video);
         dialog.show(((AppCompatActivity) this.context).getSupportFragmentManager(), "VideoDialog");
     }
