@@ -2,6 +2,7 @@ package dam.pmdm.spyrothedragon;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -37,7 +39,10 @@ import dam.pmdm.spyrothedragon.databinding.GuideWorldsBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    NavController navController = null;
+    private NavController navController = null;
+    private MenuItem charactersMenuItem = null;
+    private MenuItem worldsMenuItem = null;
+    private MenuItem collectiblesMenuItem = null;
     private ActivityMainBinding binding;
     private GuideWelcomeBinding guideBinding;
     private GuideCharactersBinding guideCharactersBinding;
@@ -46,19 +51,13 @@ public class MainActivity extends AppCompatActivity {
     private GuideInfoIconBinding guideInfoIconBinding;
     private GuideFinalBinding guideFinalBinding;
     private ArrayList<float[]> menuItemsInfo = new ArrayList<>();
-
+    private boolean reproducingGuide = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        guideBinding = binding.includeLayoutWelcome;
-        guideCharactersBinding = binding.includeLayoutCharacters;
-        guideWorldsBinding = binding.includeLayoutWorlds;
-        guideCollectiblesBinding = binding.includeLayoutCollectibles;
-        guideInfoIconBinding = binding.includeLayoutInfoIcon;
-        guideFinalBinding = binding.includeLayoutFinal;
+        setBindings();
         setContentView(binding.getRoot());
 
         setDefaultActionBar();
@@ -82,12 +81,65 @@ public class MainActivity extends AppCompatActivity {
         });
 
         getToolbarInfoItemSize();
-        getBottomNavMenuItemsSize();
+        getBottomNavigationViewInfo();
 
         MyApp app = (MyApp) getApplication();
         boolean showGuide = app.getSavedNeedGuide();
         if (showGuide)
             initializeGuide();
+    }
+
+    private void setBindings() {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        guideBinding = binding.includeLayoutWelcome;
+        guideCharactersBinding = binding.includeLayoutCharacters;
+        guideWorldsBinding = binding.includeLayoutWorlds;
+        guideCollectiblesBinding = binding.includeLayoutCollectibles;
+        guideInfoIconBinding = binding.includeLayoutInfoIcon;
+        guideFinalBinding = binding.includeLayoutFinal;
+    }
+
+    private void setGuideOnClickListeners() {
+        guideBinding.btnStartGuide.setOnClickListener(view -> {
+            guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
+            onStartGuide(); // Inicia la guía
+        });
+        guideBinding.btnExitGuide.setOnClickListener(this::onExitGuide);
+    }
+
+    private void setCharactersGuideOnClickListeners() {
+        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
+        guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(view -> {
+            soundOnClickButtonNext(); // Reproduce el sonido
+            guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
+            goToWorlds();
+        });
+    }
+
+    private void setWorldsGuideOnClickListeners() {
+        guideWorldsBinding.btnExitGuideWorlds.setOnClickListener(this::onExitGuide);
+        guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(v -> {
+            soundOnClickButtonNext(); // Reproduce el sonido
+            guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
+            goToCollectibles();
+        });
+    }
+
+    private void setCollectiblesGuideClickListeners() {
+        guideCollectiblesBinding.btnExitGuideCollectibles.setOnClickListener(this::onExitGuide);
+        guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(v -> {
+            soundOnClickButtonNext(); // Reproduce el sonido
+            guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
+            goToInfoIcon();
+        });
+    }
+
+    private void setInfoIconGuideClickListeners() {
+        guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(this::onExitGuide);
+    }
+
+    private void setFinalGuideOnClickListeners() {
+        guideFinalBinding.btnExitGuideFinal.setOnClickListener(this::onExitGuide);
     }
 
     private void getToolbarInfoItemSize() {
@@ -115,9 +167,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getBottomNavMenuItemsSize() {
+    private void getBottomNavigationViewInfo() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.navView);
-        int menuItemsNumber = bottomNavigationView.getMenu().size();
+        getBottomNavMenuItemsSize(bottomNavigationView);
+        findMenuItems(bottomNavigationView);
+    }
+
+    private void findMenuItems(BottomNavigationView bottomNavigationView) {
+        Menu bottomNavigationMenu = bottomNavigationView.getMenu();
+        charactersMenuItem = bottomNavigationMenu.findItem(R.id.nav_characters);
+        worldsMenuItem = bottomNavigationMenu.findItem(R.id.nav_worlds);
+        collectiblesMenuItem = bottomNavigationMenu.findItem(R.id.nav_collectibles);
+    }
+
+    private void getBottomNavMenuItemsSize(BottomNavigationView bottomNavigationView) {
+        Menu bottomNavigationMenu = bottomNavigationView.getMenu();
+        int menuItemsNumber = bottomNavigationMenu.size();
 
         // Usamos post para asegurarnos de que las vistas estén completamente renderizadas antes de obtener el ancho
         bottomNavigationView.post(() -> {
@@ -140,54 +205,31 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initializeGuide() {
-        guideBinding.btnStartGuide.setOnClickListener(view -> {
-            soundOnClickButtonStart(view); // Reproduce el sonido
-            onStartGuide(view); // Inicia la guía
-        });
-        guideBinding.btnExitGuide.setOnClickListener(view -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
+        setGuideOnClickListeners();
+        reproducingGuide = true;
         guideBinding.guideWelcomeLayout.setVisibility(View.VISIBLE);
-
     }
 
-    private void onStartGuide(View view) {
-        guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
+    private void onStartGuide() {
+        soundOnClickButtonStart(); // Reproduce el sonido
         goToCharacters();
     }
 
-    private void soundOnClickButtonStart(View view) {
-        // Reproducir sonido al pulsar el botón de inicio
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.dragon_get);
-        mediaPlayer.start();
-
-        // Establecer el listener para liberar recursos después de la reproducción
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();  // Liberar el MediaPlayer
-            }
-        });
+    private void soundOnClickButtonStart() {
+        startSound(R.raw.dragon_get);
     }
 
-    private void soundOnClickButtonNext(View view) {
-        // Reproducir sonido al pulsar el botón de inicio
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.gem_chest);
-        mediaPlayer.start();
-
-        // Establecer el listener para liberar recursos después de la reproducción
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();  // Liberar el MediaPlayer
-            }
-        });
+    private void soundOnClickButtonNext() {
+        startSound(R.raw.gem_chest);
     }
 
-    private void soundOnClickButtonFinish(View view) {
+    private void soundOnClickButtonFinish() {
+        startSound(R.raw.flameout);
+    }
+
+    private void startSound(int sound) {
         // Reproducir sonido al pulsar el botón de inicio
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.flameout);
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, sound);
         mediaPlayer.start();
 
         // Establecer el listener para liberar recursos después de la reproducción
@@ -200,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onExitGuide(View view) {
+        soundOnClickButtonFinish();
+
         MyApp app = (MyApp) getApplication();
         app.saveNeedGuide(false);
 
@@ -210,7 +254,8 @@ public class MainActivity extends AppCompatActivity {
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
         guideFinalBinding.guideFinalLayout.setVisibility(View.GONE);
 
-        selectedBottomMenuById(R.id.nav_characters);
+        selectedBottomMenu(charactersMenuItem);
+        reproducingGuide = false;
     }
 
     private AnimatorSet getPulseAnimatorSet(int duration, ObjectAnimator scaleX, ObjectAnimator scaleY) {
@@ -249,110 +294,93 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setMenuPulsePosition(View pulse, View text, int position) {
+    private float getFireItemMargin(int position, int itemWidth) {
+        float margin = 0;
+        if (position == 1) {
+            margin = -itemWidth + (itemWidth / 4f);
+        } else if (position == 2) {
+            margin = -itemWidth;
+        } else if (position == 3) {
+            margin = - itemWidth / 6f;
+        }
+        return margin;
+    }
+
+    private void setMenuPulsePosition(View pulse, View text, View fire, int position) {
         float[] itemInfo = menuItemsInfo.get(position);
 
         float padding = itemInfo[0];
         int itemWidth = (int) itemInfo[1];
         float itemX = itemInfo[2] + padding;
         float itemY = itemInfo[3];
-        float margin = getTextItemMargin(position, itemWidth);
+        float textMargin = getTextItemMargin(position, itemWidth);
 
         setItemPosition(pulse, itemWidth, itemX, itemY);
-        setItemPosition(text, -1, itemX + margin, -1);
+        setItemPosition(text, -1, itemX + textMargin, -1);
 
         // Iniciar la animación cuando ya se ha renderizado la vista en pantalla
         pulse.post(() -> {
+            if (fire != null) {
+                int textWidth = text.getWidth();
+                float fireMargin = getFireItemMargin(position, textWidth);
+                setItemPosition(fire, textWidth, itemX + fireMargin, -1);
+            }
             startPulseAnimation(pulse);
         });
     }
 
     private void goToCharacters() {
+        guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
+        setCharactersGuideOnClickListeners();
+
         View pulseItem = guideCharactersBinding.pulseImageCharacters;
         View textItem = guideCharactersBinding.textStepCharacters;
-        setMenuPulsePosition(pulseItem, textItem, 1);
+        View fireItem = guideCharactersBinding.avFireSelectionCharacters;
+        setMenuPulsePosition(pulseItem, textItem, fireItem, 1);
 
-        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
-        guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(view -> {
-            soundOnClickButtonNext(view); // Reproduce el sonido
-            goToWorlds(view);
-        });
-        guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(view -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
-
-        //Para ir a una de las pantallas del menu
-        selectedBottomMenuById(R.id.nav_characters);
+        selectedBottomMenu(charactersMenuItem);
     }
 
-    private void goToWorlds(View view) {
+    private void goToWorlds() {
+        guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
+        setWorldsGuideOnClickListeners();
+
         View pulseItem = guideWorldsBinding.pulseImageWorlds;
         View textItem = guideWorldsBinding.textStepWorlds;
-        setMenuPulsePosition(pulseItem, textItem, 2);
+        View fireItem = guideWorldsBinding.avFireSelectionWorlds;
+        setMenuPulsePosition(pulseItem, textItem, fireItem, 2);
 
-        guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
-
-        guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(v -> {
-            soundOnClickButtonNext(view); // Reproduce el sonido
-            goToCollectibles(view);
-        });
-        guideWorldsBinding.btnExitGuideWorlds.setOnClickListener(v -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
-
-        selectedBottomMenuById(R.id.nav_worlds);
+        selectedBottomMenu(worldsMenuItem);
     }
 
 
-    private void goToCollectibles(View view) {
+    private void goToCollectibles() {
+        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
+        setCollectiblesGuideClickListeners();
+
         View pulseItem = guideCollectiblesBinding.pulseImageCollectibles;
         View textItem = guideCollectiblesBinding.textStepCollectibles;
-        setMenuPulsePosition(pulseItem, textItem, 3);
+        View fireItem = guideCollectiblesBinding.avFireSelectionCollectibles;
+        setMenuPulsePosition(pulseItem, textItem, fireItem, 3);
 
-        guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
-
-        guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(v -> {
-            soundOnClickButtonNext(view); // Reproduce el sonido
-            goToInfoIcon(view);
-        });
-        guideCollectiblesBinding.btnExitGuideCollectibles.setOnClickListener(v -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
-
-        selectedBottomMenuById(R.id.nav_collectibles);
+        selectedBottomMenu(collectiblesMenuItem);
     }
 
-    private void goToInfoIcon(View view) {
-        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
-
-        guideInfoIconBinding.btnNextGuideInfoIcon.setOnClickListener(v -> {
-            soundOnClickButtonNext(view); // Reproduce el sonido
-            goToFinal(view);
-        });
-        guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(v -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
-
+    private void goToInfoIcon() {
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.VISIBLE);
+        setInfoIconGuideClickListeners();
 
         View pulseInfoIcon = guideInfoIconBinding.pulseImageInfoIcon;
         View textInfo = guideInfoIconBinding.textStepInfoIcon;
-        setMenuPulsePosition(pulseInfoIcon, textInfo, 0);
+        setMenuPulsePosition(pulseInfoIcon, textInfo, null, 0);
+
         new Handler(Looper.getMainLooper()).postDelayed(this::showInfoDialog, 500);
     }
 
-    private void goToFinal(View view) {
-        guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
+    private void goToFinal() {
         guideFinalBinding.btnExitGuideFinal.setVisibility(View.INVISIBLE);
-        guideFinalBinding.btnExitGuideFinal.setOnClickListener(v -> {
-            soundOnClickButtonFinish(view);
-            onExitGuide(view);
-        });
         guideFinalBinding.guideFinalLayout.setVisibility(View.VISIBLE);
+        setFinalGuideOnClickListeners();
 
         View arrow = guideFinalBinding.avArrowSelectionFinalCharacters;
         View pulse = guideFinalBinding.pulseImageFinalCharacters;
@@ -498,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
         int itemWidth = (int) itemInfo[1];
         float itemX = itemInfo[2] + padding;
         float itemY = itemInfo[3];
-        float margin = getTextItemMargin(position, itemWidth);
+        float textMargin = getTextItemMargin(position, itemWidth);
 
         if (position == 0) {
             itemY = itemInfo[3];
@@ -506,7 +534,7 @@ public class MainActivity extends AppCompatActivity {
 
         setItemPosition(arrow, itemWidth, itemX, -1);
         setItemPosition(pulse, itemWidth, itemX, itemY);
-        setItemPosition(text, -1, itemX + margin, -1);
+        setItemPosition(text, -1, itemX + textMargin, -1);
     }
 
     private void animateSection(View arrow, View pulse, View text, long startDelay) {
@@ -543,40 +571,20 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout.setLiftOnScroll(false);
     }
 
-
-    private void selectedBottomMenuById(int menuItemId) {
-        NavOptions navOptions = new NavOptions.Builder()
-                .setEnterAnim(R.anim.nav_slide_left)
-                .setExitAnim(R.anim.nav_slide_right)
-                .setPopEnterAnim(R.anim.nav_slide_left)
-                .setPopExitAnim(R.anim.nav_slide_right)
-                .build();
-
-        if (menuItemId == R.id.nav_collectibles) {
-            navController.navigate(R.id.navigation_collectibles, null, navOptions);
-            guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
-        } else if (menuItemId == R.id.nav_worlds) {
-            navController.navigate(R.id.navigation_worlds, null, navOptions);
-            guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
-        } else {
-            navController.navigate(R.id.navigation_characters, null, navOptions);
-            guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
     private boolean selectedBottomMenu(@NonNull MenuItem menuItem) {
         int destinationId = menuItem.getItemId();
+        NavDestination currentDestination = navController.getCurrentDestination();
+
+        if (currentDestination != null && currentDestination.getId() == destinationId) {
+            return true;  // Evita recargar el mismo fragmento
+        }
+
         NavOptions navOptions = new NavOptions.Builder()
                 .setEnterAnim(R.anim.nav_slide_left)
                 .setExitAnim(R.anim.nav_slide_right)
                 .setPopEnterAnim(R.anim.nav_slide_left)
                 .setPopExitAnim(R.anim.nav_slide_right)
                 .build();
-
-        if (navController.getCurrentDestination() != null &&
-                navController.getCurrentDestination().getId() == destinationId) {
-            return true;  // Evita recargar el mismo fragmento
-        }
 
         if (destinationId == R.id.nav_characters)
             navController.navigate(R.id.navigation_characters, null, navOptions);
@@ -585,7 +593,6 @@ public class MainActivity extends AppCompatActivity {
         else
             navController.navigate(R.id.navigation_collectibles, null, navOptions);
         return true;
-
     }
 
     @Override
@@ -605,14 +612,30 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showInfoDialog() {
-        // Crear un diálogo de información
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.title_about)
-                .setMessage(R.string.text_about)
-                .setPositiveButton(R.string.accept, null)
-                .show();
+    private void handleDialogDismiss(AlertDialog dialog) {
+        soundOnClickButtonNext(); // Reproduce el sonido
+        guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.GONE);
+        goToFinal();
+        dialog.dismiss();
     }
 
+    private void showInfoDialog() {
+        // Crear un diálogo de información
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_about)
+                .setMessage(R.string.text_about)
+                .setPositiveButton(R.string.accept, null);
+        AlertDialog infoDialog = builder.create();
+        infoDialog.show();
+
+        if (reproducingGuide) {
+            infoDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+                handleDialogDismiss(infoDialog);
+            });
+            infoDialog.setOnDismissListener(dialog -> {
+                handleDialogDismiss(infoDialog);
+            });
+        }
+    }
 
 }

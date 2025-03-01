@@ -12,13 +12,12 @@
     tools:visibility="visible">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/av_FireSelectionCharacter"
-        android:layout_width="424dp"
-        android:layout_height="283dp"
-        android:layout_marginTop="520dp"
-        android:layout_marginEnd="120dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/av_FireSelectionCharacters"
+        android:layout_width="1dp"
+        android:layout_height="250dp"
+        android:layout_marginBottom="-50dp"
+        app:layout_constraintBottom_toTopOf="@+id/pulseImageCharacters"
+        app:layout_constraintStart_toEndOf="@id/pulseImageCharacters"
         app:lottie_autoPlay="true"
         app:lottie_fileName="fire_selection_lottie.json"
         app:lottie_loop="true" />
@@ -52,12 +51,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="16dp"
         android:background="@color/white_translucent"
         android:text="@string/btn_text_skip"
         android:textAllCaps="false"
         android:textColor="@color/dark_purple"
         android:textSize="@dimen/small_textSize"
+        android:translationY="?attr/actionBarSize"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
