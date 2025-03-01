@@ -25,22 +25,22 @@
 
     <TextView
         android:id="@+id/textStepCharacters"
-        android:layout_width="248dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/speech_bubble_left"
         android:gravity="center"
+        android:paddingHorizontal="30dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="60dp"
         android:text="@string/tv_guide_characters"
         android:textColor="@color/white"
         android:textSize="@dimen/small_textSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/pulseImageCharacters"
+        app:layout_constraintStart_toEndOf="@id/pulseImageCharacters" />
 
     <ImageView
         android:id="@+id/pulseImageCharacters"
-        android:layout_width="360px"
+        android:layout_width="74dp"
         android:layout_height="74dp"
         android:src="@drawable/circle_focus_purple"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -51,15 +51,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
         android:background="@color/white_translucent"
         android:text="@string/btn_text_skip"
         android:textAllCaps="false"
         android:textColor="@color/dark_purple"
         android:textSize="@dimen/small_textSize"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.widget.Button
         android:id="@+id/btn_next_guide_characters"

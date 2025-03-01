@@ -8,6 +8,7 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="white_translucent">#D0FFFFFF</color>
+    <color name="white_highly_translucent">#65FFFFFF</color>
     <color name="purple_transparent">#B39C35BA</color>
     <color name="purple_truly_transparent">#709c35ba</color>
     <color name="dark_purple">#810C9D</color>

@@ -14,14 +14,10 @@
     <string name="text4_guide_welcome">Pulsa \"Comenzar\" y deja que Spyro te lleve volando a través de esta guía interactiva.</string>
     <string name="tv_textWelcome_start">COMENZAR</string>
     <string name="btn_text_skip">Saltar guía</string>
-    <string name="tv_guide_characters">Aquí podrás explorar a todos los personajes del mundo de Spyro</string>
-    <string name="tv_guide_worlds">Aquí podrás explorar todos los mundos de Spyro</string>
-    <string name="tv_guide_colectibles">Aquí podrás explorar todos los coleccionables del mundo de Spyro</string>
+    <string name="tv_guide_characters">Aquí podrás \nexplorar a todos los \npersonajes del mundo \nde Spyro</string>
+    <string name="tv_guide_worlds">Aquí podrás \nexplorar todos los \nmundos de Spyro</string>
+    <string name="tv_guide_colectibles">Aquí podrás explorar \ntodos los coleccionables \ndel mundo de Spyro</string>
     <string name="btn_text_next">Siguiente</string>
     <string name="btn_end_guide">Finalizar guía</string>
-    <string name="tv_guide_info_icon">Aquí podrás encontrar la información de la app</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    <string name="tv_guide_info_icon">Aquí podrás encontrar \nla información \nde la app</string>
 </resources>

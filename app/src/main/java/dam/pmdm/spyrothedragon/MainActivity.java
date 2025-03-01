@@ -9,7 +9,8 @@ import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +23,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
 
 import dam.pmdm.spyrothedragon.databinding.ActivityMainBinding;
 import dam.pmdm.spyrothedragon.databinding.GuideCharactersBinding;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private GuideCollectiblesBinding guideCollectiblesBinding;
     private GuideInfoIconBinding guideInfoIconBinding;
     private GuideFinalBinding guideFinalBinding;
+    private ArrayList<float[]> menuItemsInfo = new ArrayList<>();
 
 
     @Override
@@ -76,12 +81,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        getToolbarInfoItemSize();
+        getBottomNavMenuItemsSize();
+
         MyApp app = (MyApp) getApplication();
         boolean showGuide = app.getSavedNeedGuide();
         if (showGuide)
             initializeGuide();
-
     }
+
+    private void getToolbarInfoItemSize() {
+        MaterialToolbar mToolbar = findViewById(R.id.main_appbar);
+
+        // Usamos post para asegurarnos de que las vistas estén completamente renderizadas antes de obtener el ancho
+        mToolbar.post(() -> {
+            Menu mToolbarMenu = mToolbar.getMenu();
+            MenuItem menuItem = mToolbarMenu.findItem(R.id.action_info);
+
+            if (menuItem != null) {
+                View infoItem = mToolbar.findViewById(menuItem.getItemId());
+
+                if (infoItem != null) {
+                    float itemWidth = infoItem.getWidth();
+                    int[] location = new int[2];
+                    infoItem.getLocationOnScreen(location);
+                    float itemX = location[0];
+                    float itemY = infoItem.getY();
+                    float[] itemInfo = {0, itemWidth, itemX, itemY};
+
+                    menuItemsInfo.add(itemInfo);
+                }
+            }
+        });
+    }
+
+    private void getBottomNavMenuItemsSize() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navView);
+        int menuItemsNumber = bottomNavigationView.getMenu().size();
+
+        // Usamos post para asegurarnos de que las vistas estén completamente renderizadas antes de obtener el ancho
+        bottomNavigationView.post(() -> {
+            for (int i = 0; i < menuItemsNumber; i++) {
+                ViewGroup menuView = (ViewGroup) bottomNavigationView.getChildAt(0);
+                View itemView = menuView.getChildAt(i);
+
+                float totalWidth = bottomNavigationView.getWidth();
+                float itemWidth = itemView.getWidth();
+                float sidePadding = (totalWidth - (itemWidth * menuItemsNumber)) / 2f;
+
+                float itemX = itemView.getX();
+                float itemY = itemView.getY();
+                float[] itemInfo = {sidePadding, itemWidth, itemX, itemY};
+
+                menuItemsInfo.add(itemInfo);
+            }
+        });
+    }
+
 
     private void initializeGuide() {
         guideBinding.btnStartGuide.setOnClickListener(view -> {
@@ -98,10 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void onStartGuide(View view) {
         guideBinding.guideWelcomeLayout.setVisibility(View.GONE);
-        guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
         goToCharacters();
-
     }
+
     private void soundOnClickButtonStart(View view) {
         // Reproducir sonido al pulsar el botón de inicio
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.dragon_get);
@@ -156,11 +211,67 @@ public class MainActivity extends AppCompatActivity {
         guideFinalBinding.guideFinalLayout.setVisibility(View.GONE);
 
         selectedBottomMenuById(R.id.nav_characters);
+    }
 
+    private AnimatorSet getPulseAnimatorSet(int duration, ObjectAnimator scaleX, ObjectAnimator scaleY) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setDuration(duration);
+        return animatorSet;
+    }
 
+    private void startPulseAnimation(View view) {
+        float valueStart = 1f;
+        float valueEnd = 0.5f;
+        ObjectAnimator scaleX = getScaleXObjectAnimator(view, valueStart, valueEnd);
+        ObjectAnimator scaleY = getScaleYObjectAnimator(view, valueStart, valueEnd);
+
+        scaleX.setRepeatCount(3);
+        scaleY.setRepeatCount(3);
+
+        AnimatorSet animatorSet = getPulseAnimatorSet(1000, scaleX, scaleY);
+
+        animatorSet.start();
+    }
+
+    private void setItemPosition(View view, int itemWidth, float itemX, float itemY) {
+        // Establecer la posición X de la vista antes de la animación
+        if (itemWidth != -1) {
+            LayoutParams params = view.getLayoutParams();
+            params.width = itemWidth;
+            view.setLayoutParams(params);
+        }
+        if (itemX != -1) {
+            view.setTranslationX(itemX);
+        }
+        if (itemY != -1) {
+            view.setTranslationY(itemY);
+        }
+    }
+
+    private void setMenuPulsePosition(View pulse, View text, int position) {
+        float[] itemInfo = menuItemsInfo.get(position);
+
+        float padding = itemInfo[0];
+        int itemWidth = (int) itemInfo[1];
+        float itemX = itemInfo[2] + padding;
+        float itemY = itemInfo[3];
+        float margin = getTextItemMargin(position, itemWidth);
+
+        setItemPosition(pulse, itemWidth, itemX, itemY);
+        setItemPosition(text, -1, itemX + margin, -1);
+
+        // Iniciar la animación cuando ya se ha renderizado la vista en pantalla
+        pulse.post(() -> {
+            startPulseAnimation(pulse);
+        });
     }
 
     private void goToCharacters() {
+        View pulseItem = guideCharactersBinding.pulseImageCharacters;
+        View textItem = guideCharactersBinding.textStepCharacters;
+        setMenuPulsePosition(pulseItem, textItem, 1);
+
         guideCharactersBinding.btnExitGuideCharacters.setOnClickListener(this::onExitGuide);
         guideCharactersBinding.btnNextGuideCharacters.setOnClickListener(view -> {
             soundOnClickButtonNext(view); // Reproduce el sonido
@@ -170,27 +281,18 @@ public class MainActivity extends AppCompatActivity {
             soundOnClickButtonFinish(view);
             onExitGuide(view);
         });
-        guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
+
         //Para ir a una de las pantallas del menu
         selectedBottomMenuById(R.id.nav_characters);
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
-                guideCharactersBinding.pulseImageCharacters, "scaleX", 1f, 0.5f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
-                guideCharactersBinding.pulseImageCharacters, "scaleY", 1f, 0.5f);
-        scaleX.setRepeatCount(3);
-        scaleY.setRepeatCount(3);
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(scaleX).with(scaleY);
-        animatorSet.setDuration(1000);
-
-        animatorSet.start();
-
-
     }
 
     private void goToWorlds(View view) {
+        View pulseItem = guideWorldsBinding.pulseImageWorlds;
+        View textItem = guideWorldsBinding.textStepWorlds;
+        setMenuPulsePosition(pulseItem, textItem, 2);
+
         guideCharactersBinding.guideCharactersLayout.setVisibility(View.GONE);
+
         guideWorldsBinding.btnNextGuideWorlds.setOnClickListener(v -> {
             soundOnClickButtonNext(view); // Reproduce el sonido
             goToCollectibles(view);
@@ -200,27 +302,17 @@ public class MainActivity extends AppCompatActivity {
             onExitGuide(view);
         });
 
-
-        guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_worlds);
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
-                guideWorldsBinding.pulseImageWorlds, "scaleX", 1f, 0.5f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
-                guideWorldsBinding.pulseImageWorlds, "scaleY", 1f, 0.5f);
-        scaleX.setRepeatCount(3);
-        scaleY.setRepeatCount(3);
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(scaleX).with(scaleY);
-        animatorSet.setDuration(1000);
-
-        animatorSet.start();
-
     }
 
 
     private void goToCollectibles(View view) {
+        View pulseItem = guideCollectiblesBinding.pulseImageCollectibles;
+        View textItem = guideCollectiblesBinding.textStepCollectibles;
+        setMenuPulsePosition(pulseItem, textItem, 3);
+
         guideWorldsBinding.guideWorldsLayout.setVisibility(View.GONE);
+
         guideCollectiblesBinding.btnNextGuideCollectibles.setOnClickListener(v -> {
             soundOnClickButtonNext(view); // Reproduce el sonido
             goToInfoIcon(view);
@@ -230,48 +322,27 @@ public class MainActivity extends AppCompatActivity {
             onExitGuide(view);
         });
 
-        guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
         selectedBottomMenuById(R.id.nav_collectibles);
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
-                guideCollectiblesBinding.pulseImageCollectibles, "scaleX", 1f, 0.5f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
-                guideCollectiblesBinding.pulseImageCollectibles, "scaleY", 1f, 0.5f);
-        scaleX.setRepeatCount(3);
-        scaleY.setRepeatCount(3);
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(scaleX).with(scaleY);
-        animatorSet.setDuration(1000);
-
-        animatorSet.start();
-
     }
 
     private void goToInfoIcon(View view) {
         guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.GONE);
+
         guideInfoIconBinding.btnNextGuideInfoIcon.setOnClickListener(v -> {
             soundOnClickButtonNext(view); // Reproduce el sonido
             goToFinal(view);
         });
         guideInfoIconBinding.btnExitGuideInfoIcon.setOnClickListener(v -> {
-                    soundOnClickButtonFinish(view);
-                    onExitGuide(view);
-                });
+            soundOnClickButtonFinish(view);
+            onExitGuide(view);
+        });
+
         guideInfoIconBinding.guideInfoIconLayout.setVisibility(View.VISIBLE);
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(
-                guideInfoIconBinding.pulseImageInfoIcon, "scaleX", 1f, 0.5f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(
-                guideInfoIconBinding.pulseImageInfoIcon, "scaleY", 1f, 0.5f);
-        scaleX.setRepeatCount(3);
-        scaleY.setRepeatCount(3);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(scaleX).with(scaleY);
-        animatorSet.setDuration(1000);
-        animatorSet.start();
-
-        new Handler(Looper.getMainLooper()).postDelayed(this::showInfoDialog, 2000);
-
+        View pulseInfoIcon = guideInfoIconBinding.pulseImageInfoIcon;
+        View textInfo = guideInfoIconBinding.textStepInfoIcon;
+        setMenuPulsePosition(pulseInfoIcon, textInfo, 0);
+        new Handler(Looper.getMainLooper()).postDelayed(this::showInfoDialog, 500);
     }
 
     private void goToFinal(View view) {
@@ -283,67 +354,96 @@ public class MainActivity extends AppCompatActivity {
         });
         guideFinalBinding.guideFinalLayout.setVisibility(View.VISIBLE);
 
+        View arrow = guideFinalBinding.avArrowSelectionFinalCharacters;
+        View pulse = guideFinalBinding.pulseImageFinalCharacters;
+        View text = guideFinalBinding.textStepFinalCharacters;
         long delay = 0; // Empezamos sin retraso
 
-        animateSection(
-                guideFinalBinding.avArrowSelectionCharacterFinal,
-                guideFinalBinding.pulseImageCharactersFinal,
-                guideFinalBinding.textStepCharactersFinal,
-                delay = 0
-        );
+        setAnimationSetPositions(1, arrow, pulse, text);
+        animateSection(arrow, pulse, text, delay);
 
-        animateSection(
-                guideFinalBinding.avArrowSelectionWorldsFinal,
-                guideFinalBinding.pulseImageWorldsFinal,
-                guideFinalBinding.textStepWorldsFinal,
-                delay = 4000
-        );
+        arrow = guideFinalBinding.avArrowSelectionFinalWorlds;
+        pulse = guideFinalBinding.pulseImageFinalWorlds;
+        text = guideFinalBinding.textStepFinalWorlds;
+        delay = 4000;
 
-        animateSection(
-                guideFinalBinding.avArrowSelectionCollectiblesFinal,
-                guideFinalBinding.pulseImageCollectiblesFinal,
-                guideFinalBinding.textStepCollectiblesFinal,
-                delay = 8000
-        );
+        setAnimationSetPositions(2, arrow, pulse, text);
+        animateSection(arrow, pulse, text, delay);
 
-        animateSection(
-                guideFinalBinding.avArrowSelectionInfoIconFinal,
-                guideFinalBinding.pulseImageInfoIconFinal,
-                guideFinalBinding.textStepInfoIconFinal,
-                delay = 12000
-        );
+        arrow = guideFinalBinding.avArrowSelectionFinalCollectibles;
+        pulse = guideFinalBinding.pulseImageFinalCollectibles;
+        text = guideFinalBinding.textStepFinalCollectibles;
+        delay = 8000;
+
+        setAnimationSetPositions(3, arrow, pulse, text);
+        animateSection(arrow, pulse, text, delay);
+
+        arrow = guideFinalBinding.avArrowSelectionFinalInfoIcon;
+        pulse = guideFinalBinding.pulseImageFinalInfoIcon;
+        text = guideFinalBinding.textStepFinalInfoIcon;
+        delay = 12000;
+
+        setAnimationSetPositions(0, arrow, pulse, text);
+        animateSection(arrow, pulse, text, delay);
 
         // Mostrar botón de salida al final
-        showExitButton(delay = 16000);
+        delay = 16000;
+        showExitButton(delay);
     }
 
-    private void animateSection(View arrow, View pulse, View text, long startDelay) {
-        long duration = 2000; // Duración de aparición
+    private void setItemAnimation(View view, float alfa, float scaleX, float scaleY) {
+        view.setAlpha(alfa);
+        view.setScaleX(scaleX);
+        view.setScaleY(scaleY);
+    }
 
-        arrow.setAlpha(0f);
-        arrow.setScaleX(0.5f);
-        arrow.setScaleY(0.5f);
+    private ObjectAnimator getFadeObjectAnimator(View view, float valueStart, float valueEnd) {
+        return ObjectAnimator.ofFloat(view, "alpha", valueStart, valueEnd);
+    }
 
-        pulse.setAlpha(0f);
-        pulse.setScaleX(0.5f);
-        pulse.setScaleY(0.5f);
+    private ObjectAnimator getScaleXObjectAnimator(View view, float valueStart, float valueEnd) {
+        return ObjectAnimator.ofFloat(view, "scaleX", valueStart, valueEnd);
+    }
 
-        text.setAlpha(0f);
-        text.setScaleX(0.5f);
-        text.setScaleY(0.5f);
+    private ObjectAnimator getScaleYObjectAnimator(View view, float valueStart, float valueEnd) {
+        return ObjectAnimator.ofFloat(view, "scaleY", valueStart, valueEnd);
+    }
 
-        ObjectAnimator fadeInArrow = ObjectAnimator.ofFloat(arrow, "alpha", 0f, 1f);
-        ObjectAnimator fadeInPulse = ObjectAnimator.ofFloat(pulse, "alpha", 0f, 1f);
-        ObjectAnimator fadeInText = ObjectAnimator.ofFloat(text, "alpha", 0f, 1f);
-
-        ObjectAnimator scaleUpArrowX = ObjectAnimator.ofFloat(arrow, "scaleX", 0.5f, 1f);
-        ObjectAnimator scaleUpArrowY = ObjectAnimator.ofFloat(arrow, "scaleY", 0.5f, 1f);
-        ObjectAnimator scaleUpPulseX = ObjectAnimator.ofFloat(pulse, "scaleX", 0.5f, 1f);
-        ObjectAnimator scaleUpPulseY = ObjectAnimator.ofFloat(pulse, "scaleY", 0.5f, 1f);
-        ObjectAnimator scaleUpTextX = ObjectAnimator.ofFloat(text, "scaleX", 0.5f, 1f);
-        ObjectAnimator scaleUpTextY = ObjectAnimator.ofFloat(text, "scaleY", 0.5f, 1f);
-
+    /**
+     * Generar animaciones de aparición
+     *
+     * @param arrow
+     * @param pulse
+     * @param text
+     * @param duration
+     * @param startDelay
+     * @return AnimatorSet
+     */
+    private AnimatorSet getAppearSet(View arrow, View pulse, View text, long duration, long startDelay) {
         AnimatorSet appearSet = new AnimatorSet();
+
+        float alfa = 0f;
+        float scaleX = 0.5f;
+        float scaleY = 0.5f;
+        setItemAnimation(arrow, alfa, scaleX, scaleY);
+        setItemAnimation(pulse, alfa, scaleX, scaleY);
+        setItemAnimation(text, alfa, scaleX, scaleY);
+
+        float valueStart = 0f;
+        float valueEnd = 1f;
+        ObjectAnimator fadeInArrow = getFadeObjectAnimator(arrow, valueStart, valueEnd);
+        ObjectAnimator fadeInPulse = getFadeObjectAnimator(pulse, valueStart, valueEnd);
+        ObjectAnimator fadeInText = getFadeObjectAnimator(text, valueStart, valueEnd);
+
+        valueStart = 0.5f;
+        ObjectAnimator scaleUpArrowX = getScaleXObjectAnimator(arrow, valueStart, valueEnd);
+        ObjectAnimator scaleUpPulseX = getScaleXObjectAnimator(pulse, valueStart, valueEnd);
+        ObjectAnimator scaleUpTextX = getScaleXObjectAnimator(text, valueStart, valueEnd);
+
+        ObjectAnimator scaleUpArrowY = getScaleYObjectAnimator(arrow, valueStart, valueEnd);
+        ObjectAnimator scaleUpPulseY = getScaleYObjectAnimator(pulse, valueStart, valueEnd);
+        ObjectAnimator scaleUpTextY = getScaleYObjectAnimator(text, valueStart, valueEnd);
+
         appearSet.playTogether(
                 fadeInArrow, fadeInPulse, fadeInText,
                 scaleUpArrowX, scaleUpArrowY,
@@ -353,15 +453,67 @@ public class MainActivity extends AppCompatActivity {
         appearSet.setDuration(duration);
         appearSet.setStartDelay(startDelay);
 
-        // Animaciones de desaparición
-        ObjectAnimator fadeOutArrow = ObjectAnimator.ofFloat(arrow, "alpha", 1f, 0f);
-        ObjectAnimator fadeOutPulse = ObjectAnimator.ofFloat(pulse, "alpha", 1f, 0f);
-        ObjectAnimator fadeOutText = ObjectAnimator.ofFloat(text, "alpha", 1f, 0f);
+        return appearSet;
+    }
 
+    /**
+     * Generar animaciones de desaparición
+     *
+     * @param arrow
+     * @param pulse
+     * @param text
+     * @param duration
+     * @return AnimatorSet
+     */
+    private AnimatorSet getDisappearSet(View arrow, View pulse, View text, long duration) {
         AnimatorSet disappearSet = new AnimatorSet();
+
+        ObjectAnimator fadeOutArrow = getFadeObjectAnimator(arrow, 1f, 0f);
+        ObjectAnimator fadeOutPulse = getFadeObjectAnimator(pulse, 1f, 0f);
+        ObjectAnimator fadeOutText = getFadeObjectAnimator(text, 1f, 0f);
+
         disappearSet.playTogether(fadeOutArrow, fadeOutPulse, fadeOutText);
         disappearSet.setDuration(duration);
         disappearSet.setStartDelay(duration);
+
+        return disappearSet;
+    }
+
+    private float getTextItemMargin(int position, int itemWidth) {
+        float margin = 0;
+        if (position == 1) {
+            margin = -(itemWidth / 2f);
+        } else if (position == 2) {
+            margin = -(itemWidth / 2f) - (itemWidth / 4f);
+        } else if (position == 3) {
+            margin = (itemWidth / 2f);
+        }
+        return margin;
+    }
+
+    private void setAnimationSetPositions(int position, View arrow, View pulse, View text) {
+        float[] itemInfo = menuItemsInfo.get(position);
+
+        float padding = itemInfo[0];
+        int itemWidth = (int) itemInfo[1];
+        float itemX = itemInfo[2] + padding;
+        float itemY = itemInfo[3];
+        float margin = getTextItemMargin(position, itemWidth);
+
+        if (position == 0) {
+            itemY = itemInfo[3];
+        }
+
+        setItemPosition(arrow, itemWidth, itemX, -1);
+        setItemPosition(pulse, itemWidth, itemX, itemY);
+        setItemPosition(text, -1, itemX + margin, -1);
+    }
+
+    private void animateSection(View arrow, View pulse, View text, long startDelay) {
+        long duration = 2000; // Duración de animaciones
+
+        AnimatorSet appearSet = getAppearSet(arrow, pulse, text, duration, startDelay);
+        AnimatorSet disappearSet = getDisappearSet(arrow, pulse, text, duration);
 
         AnimatorSet fullSet = new AnimatorSet();
         fullSet.playSequentially(appearSet, disappearSet);
@@ -400,13 +552,16 @@ public class MainActivity extends AppCompatActivity {
                 .setPopExitAnim(R.anim.nav_slide_right)
                 .build();
 
-        if (menuItemId == R.id.nav_collectibles)
+        if (menuItemId == R.id.nav_collectibles) {
             navController.navigate(R.id.navigation_collectibles, null, navOptions);
-        else if (menuItemId == R.id.nav_worlds)
+            guideCollectiblesBinding.guideCollectiblesLayout.setVisibility(View.VISIBLE);
+        } else if (menuItemId == R.id.nav_worlds) {
             navController.navigate(R.id.navigation_worlds, null, navOptions);
-        else
+            guideWorldsBinding.guideWorldsLayout.setVisibility(View.VISIBLE);
+        } else {
             navController.navigate(R.id.navigation_characters, null, navOptions);
-
+            guideCharactersBinding.guideCharactersLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private boolean selectedBottomMenu(@NonNull MenuItem menuItem) {

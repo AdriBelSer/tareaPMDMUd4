@@ -27,26 +27,28 @@
 
     <TextView
         android:id="@+id/textStepInfoIcon"
-        android:layout_width="248dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="-25dp"
+        android:layout_marginRight="-25dp"
         android:background="@drawable/speech_bubble_upside_right"
         android:gravity="center"
+        android:paddingHorizontal="30dp"
+        android:paddingTop="50dp"
+        android:paddingBottom="30dp"
         android:text="@string/tv_guide_info_icon"
         android:textColor="@color/white"
         android:textSize="@dimen/small_textSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/pulseImageInfoIcon"
+        app:layout_constraintTop_toBottomOf="@+id/pulseImageInfoIcon" />
 
     <ImageView
         android:id="@+id/pulseImageInfoIcon"
-        android:layout_width="97dp"
+        android:layout_width="53dp"
         android:layout_height="53dp"
-        android:layout_marginRight="-20dp"
         android:src="@drawable/circle_focus_white"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.widget.Button
@@ -54,13 +56,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
         android:background="@color/white_translucent"
         android:text="@string/btn_text_skip"
         android:textAllCaps="false"
         android:textColor="@color/dark_purple"
         android:textSize="@dimen/small_textSize"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
