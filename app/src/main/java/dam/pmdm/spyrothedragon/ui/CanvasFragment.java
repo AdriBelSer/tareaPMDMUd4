@@ -2,6 +2,7 @@ package dam.pmdm.spyrothedragon.ui;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,21 @@ public class CanvasFragment extends DialogFragment {
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            startRoarSound();
         }
+    }
+
+    private void startRoarSound() {
+            MediaPlayer mediaPlayer = MediaPlayer.create(requireContext(), R.raw.dragon_get);
+            mediaPlayer.start();
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();  // Liberar el MediaPlayer
+                }
+            });
+
     }
 
 }

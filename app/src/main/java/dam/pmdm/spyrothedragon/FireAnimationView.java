@@ -21,6 +21,7 @@ public class FireAnimationView extends View {
     private List<FireParticle> particles;
     private float[] mouthPos;
     private OnAnimationEndListener onAnimationEndListener;
+    private Canvas canvas;
 
     public FireAnimationView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,19 +34,31 @@ public class FireAnimationView extends View {
         particles = new ArrayList<>();
     }
 
-    private float[] getMouthPosition() {
+    private float[] getMouthPosition(Canvas canvas) {
         if (backgroundImage == null) {
             return new float[]{0, 0};
         }
 
-        float xMouth = 600;
-        float yMouth = 1050;
+        // Obtener dimensiones originales de la imagen
+        int imageWidth = backgroundImage.getWidth();
+        int imageHeight = backgroundImage.getHeight();
 
-        // Obtener la transformación de la imagen
+        // Posición de la boca relativa en la imagen original (ajusta estos valores)
+        float xMouth = imageWidth * 0.52f;  // 52% del ancho de la imagen
+        float yMouth = imageHeight * 0.7f; // 70% del alto de la imagen
+
+        // Convertimos a un array para ser transformado por la matriz
         float[] mouthPos = {xMouth, yMouth};
+
+        // Obtener la matriz de transformación de la imagen
+        Matrix matrix = getMatrix(canvas);
+        if (matrix != null) {
+            matrix.mapPoints(mouthPos); // Aplicar transformación (escalado + traslación)
+        }
 
         return mouthPos;
     }
+
 
     private Matrix getMatrix(Canvas canvas) {
         if (backgroundImage == null) {
@@ -71,6 +84,7 @@ public class FireAnimationView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        this.canvas = canvas;
 
         // Dibujar la imagen de fondo
         Matrix matrix = getMatrix(canvas);
@@ -79,7 +93,7 @@ public class FireAnimationView extends View {
         }
 
         // Obtener la posición de la boca para emitir partículas
-        mouthPos = getMouthPosition();
+        mouthPos = getMouthPosition(canvas);
 
         // Generar nuevas partículas
         int newParticlesCount = 10; // Aumentamos la cantidad de partículas
@@ -96,6 +110,7 @@ public class FireAnimationView extends View {
                 // Aplicar difuminado al principio de la vida de la partícula
                 if (particle.age < 100) {
                     paint.setAlpha((int) (220 * (1 - (particle.age / 100.0))));
+                    postInvalidateDelayed(100);
                 } else {
                     int color = Color.argb(255, 255, (int) (Math.random() * 10), 0);
                     paint.setColor(color);
@@ -118,9 +133,6 @@ public class FireAnimationView extends View {
     }
 
     public void startAnimation() {
-        // Ejecutar la animación normalmente
-
-        // Usar un Handler para ejecutar una acción después de 15 segundos
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
