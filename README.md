@@ -72,7 +72,7 @@ Aplicación Android con guía interactiva y contenido especial de Spyro the Drag
 
 Desarrollar esta guía interactiva me permitió:
 - Dominar la **navegación entre fragmentos** y aprender a añadir animaciones de transición entre ellos
-- Implementar un **sistema de tutoriales contextuales** que se adapta al progreso del usuario
+- Implementar un **sistema de tutoriales contextuales**
 - Optimizar la **experiencia de onboarding** usando _SharedPreferences_ para guardar el estado de finalización
 - Aprender la importancia del **feedback visual** en interfaces móviles, así como la dificultad de la responsividad entre dispositivos
 
@@ -81,7 +81,6 @@ Crear los Easter Eggs me enseñó:
 - Técnicas avanzadas de **manejo de eventos táctiles** (multitaps y pulsaciones largas)
 - Animaciones fluidas con **Canvas**
 - Integración de **contenido multimedia** (video) manteniendo la optimización
-- El equilibrio entre **funcionalidad y diversión** en el diseño de apps
 
 ### 🚀 Aprendizaje Global
 Este proyecto reforzó mi comprensión de:
@@ -94,9 +93,8 @@ Este proyecto reforzó mi comprensión de:
 <img src="https://github.com/user-attachments/assets/05196527-e024-4c93-b18d-90216d416ee1" alt="Screenshot 3" width="400">
 <img src="https://github.com/user-attachments/assets/b5bcf939-93ef-4b35-bce9-05b4d6b218cb" alt="Screenshot 4" width="400">
 <img src="https://github.com/user-attachments/assets/3c6b1cca-8e85-463b-b035-269319674307" alt="Screenshot 5" width="400">
-<img src="https://github.com/user-attachments/assets/e7a39c59-275f-484e-bca2-cb8ef4d37bc3" alt="Screenshot 6" width="400">
-<img src="https://github.com/user-attachments/assets/a1fe3497-70d9-46fd-9d9d-c94ee7ec0000" alt="Screenshot 7" width="400">
-<img src="https://github.com/user-attachments/assets/0590cdc1-34cb-4d92-87f6-085ae9891b55" alt="Screenshot 8" width="400">
+<img src="https://github.com/user-attachments/assets/a1fe3497-70d9-46fd-9d9d-c94ee7ec0000" alt="Screenshot 6" width="400">
+<img src="https://github.com/user-attachments/assets/0590cdc1-34cb-4d92-87f6-085ae9891b55" alt="Screenshot 7" width="800">
 
  
 
